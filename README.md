@@ -1,4 +1,3 @@
-```markdown
 # AI for Physics Agent Project (MVP)
 
 一个最小可用的“本地物理计算工具 + LLM 调度”项目：  
@@ -18,21 +17,19 @@ LLM 负责把自然语言解析为结构化参数，通过 **OpenAI-compatible A
 ## 仓库结构（关键文件）
 
 ```
-
 agent_project/
 agent_ssh_runner.py           # LLM 调度器：解析自然语言 → tool call → 本地执行
 Project.toml / Manifest.toml  # Julia 环境（建议提交以锁依赖版本）
 tools/
-ssh_band_tool.jl            # SSH 工具：PBC/OBC/overlay，stdin JSON → stdout JSON
-clean_out.py                # 清理工具：stdin JSON → stdout JSON（非交互）
-clean_out.cmd               # 可选：手工清理脚本（若保留）
+  ssh_band_tool.jl            # SSH 工具：PBC/OBC/overlay，stdin JSON → stdout JSON
+  clean_out.py                # 清理工具：stdin JSON → stdout JSON（非交互）
+  clean_out.cmd               # 可选：手工清理脚本（若保留）
 scripts/
-test_plot_and_introspect.jl # 早期测试脚本
-show_tree.jl                # 输出目录树（调试用）
+  test_plot_and_introspect.jl # 早期测试脚本
+  show_tree.jl                # 输出目录树（调试用）
 out/
-.gitkeep                    # 保留目录结构，实际输出不建议提交
-
-````
+  .gitkeep                    # 保留目录结构，实际输出不建议提交
+```
 
 ---
 
@@ -74,7 +71,7 @@ out/
 ```powershell
 git clone https://github.com/tawanerguo-cn/ai_for_physics_agent_project.git
 cd ai_for_physics_agent_project
-````
+```
 
 > 若你的仓库目录名仍是 `agent_project/`，以实际目录为准。
 
@@ -158,29 +155,27 @@ python .\agent_ssh_runner.py "先清理out，然后用OBC画SSH：p=0.6, N=80，
 
 ### `tools/ssh_band_tool.jl`
 
-* stdin：JSON object
-* stdout：以 JSON object 结尾（允许前面有日志，但最后必须有可解析的 `{...}`）
-* 关键参数（最常用）：
-
-  * `boundary`: `"pbc"` 或 `"obc"`（默认 `"pbc"`）
-  * `p`: number（SSH inter-cell hopping ratio，t1 固定 1.0）
-  * `b`: number（staggered onsite term，默认 0）
-  * `n_k`: int（PBC k 点数；OBC overlay 时也使用）
-  * `N`: int（OBC 有限链长度：unit cells）
-  * `overlay_pbc`: bool（OBC 时是否同时输出 PBC 对比）
-  * `out_dir`: string（默认 `"out"`）
-  * `prefix`: string（建议指定，避免混淆输出）
-  * `overwrite`: bool（默认 false）
+- stdin：JSON object
+- stdout：以 JSON object 结尾（允许前面有日志，但最后必须有可解析的 `{...}`）
+- 关键参数（最常用）：
+  - `boundary`: `"pbc"` 或 `"obc"`（默认 `"pbc"`）
+  - `p`: number（SSH inter-cell hopping ratio，t1 固定 1.0）
+  - `b`: number（staggered onsite term，默认 0）
+  - `n_k`: int（PBC k 点数；OBC overlay 时也使用）
+  - `N`: int（OBC 有限链长度：unit cells）
+  - `overlay_pbc`: bool（OBC 时是否同时输出 PBC 对比）
+  - `out_dir`: string（默认 `"out"`）
+  - `prefix`: string（建议指定，避免混淆输出）
+  - `overwrite`: bool（默认 false）
 
 ### `tools/clean_out.py`
 
-* stdin：JSON object
-* stdout：JSON object
-* 关键参数：
-
-  * `out_dir`: string（默认 `"out"`）
-  * `dry_run`: bool（默认 false）
-  * `keep_gitkeep`: bool（默认 true）
+- stdin：JSON object
+- stdout：JSON object
+- 关键参数：
+  - `out_dir`: string（默认 `"out"`）
+  - `dry_run`: bool（默认 false）
+  - `keep_gitkeep`: bool（默认 true）
 
 ---
 
@@ -190,14 +185,14 @@ python .\agent_ssh_runner.py "先清理out，然后用OBC画SSH：p=0.6, N=80，
 
 这是 Windows 的 App execution aliases 劫持导致的。解决办法之一：
 
-* 用明确的 python 路径运行，例如（以你本地实际路径为准）：
+- 用明确的 python 路径运行，例如（以你本地实际路径为准）：
 
 ```powershell
 .\.CondaPkg\.pixi\envs\default\python.exe .\agent_ssh_runner.py "清理out"
 ```
 
-或在 Windows 设置中关闭：
-**Settings → Apps → Advanced app settings → App execution aliases**
+或在 Windows 设置中关闭：  
+**Settings → Apps → Advanced app settings → App execution aliases**  
 关闭 `python.exe / python3.exe`。
 
 ### 2) Python 依赖缺失（如 `ModuleNotFoundError: openai`）
@@ -216,24 +211,23 @@ C:\path\to\python.exe -m pip install openai
 
 runner 对 Windows 做了 UTF-8 bytes 捕获与替换解码处理；若你仍遇到乱码，优先检查：
 
-* PowerShell 的编码设置
-* 工具脚本是否输出了非 UTF-8 的日志
+- PowerShell 的编码设置
+- 工具脚本是否输出了非 UTF-8 的日志
 
 ---
 
 ## 开发与扩展
 
-当前 `agent_ssh_runner.py` 的设计是“工具注册表”模式：
+当前 `agent_ssh_runner.py` 的设计是“工具注册表”模式：  
 新增工具只需：
 
 1. 实现一个 `executor(args)->dict`
-2. 在 `TOOL_SPECS` 注册 tool schema 与 executor
+2. 在 `TOOL_SPECS` 注册 tool schema 与 executor  
    无需改动主循环。
 
 适合后续扩展：
 
-* 更多 tight-binding 模型（Haldane、Kitaev chain、Chern number 等）
-* 只出数据不出图
-* 复合工作流（clean → run → summarize → 继续 run）
-
+- 更多 tight-binding 模型（Haldane、Kitaev chain、Chern number 等）
+- 只出数据不出图
+- 复合工作流（clean → run → summarize → 继续 run）
 
