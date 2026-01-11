@@ -1,0 +1,22 @@
+# outputs
+out/*
+!out/.gitkeep
+
+# CondaPkg/pixi generated env (must not commit)
+.CondaPkg/.pixi/envs/
+.CondaPkg/.pixi/cache/
+.CondaPkg/.pixi/logs/
+
+# python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
