@@ -1,0 +1,13 @@
+{
+  "boundary": "pbc",
+  "pbc_mode": "bloch",
+  "t": 1.0,
+  "lambda": 1.0,
+  "beta_num": 1,
+  "beta_den": 3,
+  "phi": 0.0,
+  "n_k": 401,
+  "out_dir": "out",
+  "prefix": "demo_aah_pbc_bloch_beta_1_3",
+  "overwrite": true
+}
